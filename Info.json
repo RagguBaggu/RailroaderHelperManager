@@ -1,0 +1,18 @@
+{
+  "identifier": "raggubaggu/helper-manager",
+  "name": "Helper Manager",
+  "author": "RagguBaggu",
+  "version": "0.1.0",
+  "url": "https://github.com/RagguBaggu/RailroaderHelperManager",
+  "description": "Mid-train and rear helper engines, MU'd to the lead engine. Press Ctrl+5 in game to open.",
+  "license": "MIT",
+  "scope": "optional",
+  "dependencies": {
+    "required": [
+      "rr/game"
+    ]
+  },
+  "assemblies": [
+    "HelperManager.dll"
+  ]
+}

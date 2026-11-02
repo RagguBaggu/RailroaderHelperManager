@@ -1,0 +1,93 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>HelperManager</AssemblyName>
+    <RootNamespace>HelperManager</RootNamespace>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <!-- Update this path to your Railroader root folder -->
+    <RailroaderDir>D:\SteamLibrary\steamapps\common\Railroader</RailroaderDir>
+    <!-- Where DeployToModsFolder (bottom of this file) copies the built mod
+         after each build. The game's built-in mod loader reads
+         Documents\Railroader\Mods, NOT the Mods folder under the game's
+         install directory. Override with -p:ModDeployDir=... if the game is
+         launched with -homedir pointing somewhere else. -->
+    <ModDeployDir>$([System.Environment]::GetFolderPath(SpecialFolder.MyDocuments))\Railroader\Mods\HelperManager</ModDeployDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Info.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LICENSE-Harmony.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Harmony is NOT part of the game. It ships in this mod's folder as
+       0Harmony.dll, deliberately not listed in Info.json (every listed DLL
+       must contain an IModEntryPoint). The game's loader has no assembly
+       resolver of its own, so HarmonyResolver.cs finds it. -->
+  <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.3.6" />
+  </ItemGroup>
+
+  <!-- Game Assemblies. Every one of these ships with the game itself. -->
+  <ItemGroup>
+    <Reference Include="Core">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Railroader">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\Railroader.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Railroader.Modding">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\Railroader.Modding.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="KeyValue.Runtime">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\KeyValue.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <!-- TextAnchor, used by UIPanelBuilder.ConfigureLayout. -->
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\Unity.InputSystem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(RailroaderDir)\Railroader_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Copies the complete mod folder (DLL, Harmony, Info.json, license)
+       into the game's Mods folder after every build. -->
+  <Target Name="DeployToModsFolder" AfterTargets="Build">
+    <ItemGroup>
+      <ModDeployFiles Include="$(OutDir)HelperManager.dll" />
+      <ModDeployFiles Include="$(OutDir)0Harmony.dll" />
+      <ModDeployFiles Include="$(OutDir)Info.json" />
+      <ModDeployFiles Include="$(OutDir)LICENSE-Harmony.txt" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ModDeployFiles)" DestinationFolder="$(ModDeployDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
